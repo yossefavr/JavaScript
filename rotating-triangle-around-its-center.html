@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotating Triangle Around Center</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="triangleCanvas" width="400" height="400"></canvas>
+
+    <script>
+        // Get the canvas and context
+        const canvas = document.getElementById("triangleCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Triangle's original coordinates
+        const triangle = [
+            { x: 100, y: 50 },
+            { x: 150, y: 150 },
+            { x: 50, y: 150 }
+        ];
+
+        let angle = 0; // Rotation angle in radians
+
+        // Function to calculate the centroid (center) of the triangle
+        function getCentroid(triangle) {
+            const x = (triangle[0].x + triangle[1].x + triangle[2].x) / 3;
+            const y = (triangle[0].y + triangle[1].y + triangle[2].y) / 3;
+            return { x, y };
+        }
+
+        // Function to draw the triangle
+        function drawTriangle() {
+            // Clear the canvas for each new frame
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Random color for each rotation
+            ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`;
+
+            // Get the centroid of the triangle
+            const centroid = getCentroid(triangle);
+
+            // Save the current state of the canvas
+            ctx.save();
+
+            // Translate to the center of the canvas
+            ctx.translate(canvas.width / 2, canvas.height / 2); // Move origin to the center of the canvas
+            ctx.translate(-centroid.x, -centroid.y); // Move origin to the centroid of the triangle
+
+            // Rotate the canvas
+            ctx.rotate(angle);
+
+            // Draw the triangle
+            ctx.beginPath();
+            ctx.moveTo(triangle[0].x, triangle[0].y);
+            ctx.lineTo(triangle[1].x, triangle[1].y);
+            ctx.lineTo(triangle[2].x, triangle[2].y);
+            ctx.closePath();
+
+            // Fill the triangle
+            ctx.fill();
+
+            // Restore the canvas state
+            ctx.restore();
+
+            // Increment the angle for the next frame
+            angle += Math.PI / 180; // Rotate by 1 degree
+
+            if (angle >= 2 * Math.PI) {
+                angle = 0; // Reset angle after one full rotation (360 degrees)
+            }
+        }
+
+        // Function to animate the triangle
+        function animate() {
+            drawTriangle();
+            requestAnimationFrame(animate);
+        }
+
+        // Start the animation
+        animate();
+    </script>
+</body>
+</html>

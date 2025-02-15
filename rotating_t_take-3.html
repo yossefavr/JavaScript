@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotating Triangle Around Its Center</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="triangleCanvas" width="400" height="400"></canvas>
+
+    <script>
+        // קבלת ה-canvas והקונטקסט
+        const canvas = document.getElementById("triangleCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // קואורדינטות המשולש
+        const triangle = [
+    { x: 100, y: 50 },
+    { x: 150, y: 150 },
+    { x: 50, y: 150 }
+];
+
+        let angle = 0; // זווית סיבוב ב-radians
+
+        // פונקציה לחשב את מרכז המשולש
+        function getCentroid(triangle) {
+            const x = (triangle[0].x + triangle[1].x + triangle[2].x) / 3;
+            const y = (triangle[0].y + triangle[1].y + triangle[2].y) / 3;
+            return { x, y };
+        }
+
+        // פונקציה לציור המשולש
+        function drawTriangle() {
+            // ניקוי ה-canvas עבור כל פריים חדש
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // צבע אקראי עבור כל סיבוב
+            ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`;
+
+            // חישוב מרכז המשולש
+            const centroid = getCentroid(triangle);
+
+            // שמירת מצב הקונטקסט הנוכחי
+            ctx.save();
+
+            // תרגום למרכז ה-canvas
+            ctx.translate(canvas.width / 2, canvas.height / 2); // הזזת המקור למרכז ה-canvas
+
+            // סיבוב המשולש
+            ctx.rotate(angle);
+
+            // חזרה על הקואורדינטות של המשולש, עם המרכז ב-canvas
+            ctx.beginPath();
+            ctx.moveTo(triangle[0].x - centroid.x, triangle[0].y - centroid.y);
+            ctx.lineTo(triangle[1].x - centroid.x, triangle[1].y - centroid.y);
+            ctx.lineTo(triangle[2].x - centroid.x, triangle[2].y - centroid.y);
+            ctx.closePath();
+
+            // צבע את המשולש
+            ctx.fill();
+
+            // שחזור מצב הקונטקסט
+            ctx.restore();
+
+            // הגדלת הזווית לפריים הבא
+            angle += Math.PI / 180; // סיבוב ב-1 מעלה
+
+            if (angle >= 2 * Math.PI) {
+                angle = 0; // החזרת הזווית ל-0 אחרי סיבוב של 360 מעלות
+            }
+        }
+
+        // פונקציה לאנימציה של המשולש
+        function animate() {
+            drawTriangle();
+            requestAnimationFrame(animate);
+        }
+
+        // התחלת האנימציה
+        animate();
+    </script>
+</body>
+</html>
